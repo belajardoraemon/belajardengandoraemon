@@ -1,0 +1,2497 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Belajar Bersama Doraemon</title>
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Baloo+2:wght@700;800&display=swap");
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+                font-family: "Nunito", sans-serif;
+                background: #29abe2;
+            }
+
+            /* ══════════════════════════
+   PERMISSION SPLASH
+══════════════════════════ */
+            #perm-splash {
+                position: fixed;
+                inset: 0;
+                z-index: 999;
+                background: #29abe2;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
+                transition: opacity 0.6s ease;
+            }
+            #perm-splash.hide {
+                opacity: 0;
+                pointer-events: none;
+            }
+            #perm-card {
+                background: white;
+                border-radius: 28px;
+                padding: 40px 36px;
+                text-align: center;
+                width: min(420px, 88vw);
+                box-shadow: 0 12px 48px rgba(0, 0, 0, 0.18);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+            #perm-dora {
+                width: 120px;
+                animation: bob 2s ease-in-out infinite;
+            }
+            @keyframes bob {
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-10px);
+                }
+            }
+            #perm-card h2 {
+                font-family: "Baloo 2", cursive;
+                font-size: 24px;
+                font-weight: 800;
+                color: #29abe2;
+            }
+            #perm-card p {
+                font-size: 15px;
+                color: #555;
+                line-height: 1.7;
+            }
+            #perm-allow-btn {
+                background: #29abe2;
+                color: white;
+                border: none;
+                border-radius: 50px;
+                padding: 16px 0;
+                width: 100%;
+                font-family: "Baloo 2", cursive;
+                font-size: 18px;
+                font-weight: 800;
+                cursor: pointer;
+                box-shadow: 0 4px 16px rgba(41, 171, 226, 0.4);
+                transition:
+                    background 0.2s,
+                    transform 0.15s;
+            }
+            #perm-allow-btn:hover {
+                background: #1a8ec2;
+                transform: scale(1.02);
+            }
+            #perm-skip-btn {
+                background: transparent;
+                border: 2px solid rgba(255, 255, 255, 0.7);
+                color: white;
+                border-radius: 50px;
+                padding: 12px 32px;
+                font-family: "Baloo 2", cursive;
+                font-size: 14px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: background 0.2s;
+            }
+            #perm-skip-btn:hover {
+                background: rgba(255, 255, 255, 0.15);
+            }
+            #perm-status {
+                font-family: "Baloo 2", cursive;
+                font-size: 14px;
+                color: rgba(255, 255, 255, 0.95);
+                min-height: 22px;
+            }
+
+            /* ══════════════════════════
+   INTRO STAGE
+══════════════════════════ */
+            #stage {
+                position: fixed;
+                inset: 0;
+                background: #29abe2;
+                cursor: pointer;
+                overflow: hidden;
+            }
+            #h-line {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                height: 6px;
+                width: 0;
+                background: white;
+                border-radius: 3px;
+                opacity: 0;
+            }
+            #ring {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 0;
+                height: 0;
+                border-radius: 50%;
+                border: 6px solid white;
+                background: transparent;
+                opacity: 0;
+                z-index: 5;
+            }
+            #dora-intro {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(0);
+                width: 140px;
+                height: 140px;
+                object-fit: contain;
+                z-index: 10;
+                opacity: 0;
+                filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.25));
+            }
+            #intro-text {
+                position: absolute;
+                bottom: 16%;
+                left: 50%;
+                transform: translateX(-50%);
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(12px, 2.6vw, 18px);
+                font-weight: 800;
+                color: white;
+                letter-spacing: 3px;
+                white-space: nowrap;
+                opacity: 0;
+                z-index: 20;
+                text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            }
+            #intro-mic-bar {
+                position: absolute;
+                bottom: 6%;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                opacity: 0;
+                z-index: 20;
+                font-family: "Baloo 2", cursive;
+                font-size: 15px;
+                font-weight: 700;
+                color: rgba(255, 255, 255, 0.95);
+            }
+            .mic-dot {
+                width: 14px;
+                height: 14px;
+                border-radius: 50%;
+                background: #ff4444;
+                animation: blink 1s infinite;
+            }
+            @keyframes blink {
+                0%,
+                100% {
+                    opacity: 0;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+
+            /* ══════════════════════════
+   MENU
+══════════════════════════ */
+            #screen-menu {
+                position: fixed;
+                inset: 0;
+                background: #e8f4fb;
+                display: flex;
+                flex-direction: column;
+                opacity: 0;
+                pointer-events: none;
+                z-index: 50;
+                transition: opacity 0.5s ease;
+            }
+            #screen-menu.show {
+                opacity: 1;
+                pointer-events: all;
+            }
+            #menu-wrap {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                margin: 24px;
+                background: white;
+                border-radius: 32px;
+                box-shadow: 0 8px 48px rgba(41, 171, 226, 0.2);
+                overflow: hidden;
+            }
+            #menu-tiles {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                padding: 24px 24px 0;
+                flex: 1;
+            }
+            .menu-tile {
+                background: #29abe2;
+                border-radius: 24px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px 12px;
+                cursor: pointer;
+                text-align: center;
+                line-height: 1.3;
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(16px, 2vw, 24px);
+                font-weight: 800;
+                color: white;
+                box-shadow: 0 6px 20px rgba(41, 171, 226, 0.35);
+                transition:
+                    transform 0.2s,
+                    box-shadow 0.2s;
+                transform: translateY(-40px) scale(0.9);
+                opacity: 0;
+                min-height: 0;
+            }
+            .menu-tile small {
+                font-size: clamp(11px, 1.3vw, 15px);
+                font-weight: 700;
+                opacity: 0.85;
+                margin-top: 5px;
+            }
+            .menu-tile:hover {
+                transform: scale(1.04) !important;
+                box-shadow: 0 10px 30px rgba(41, 171, 226, 0.5);
+            }
+            .menu-tile.drop {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+                transition:
+                    transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    opacity 0.4s ease;
+            }
+            #menu-bottom {
+                height: 200px;
+                display: flex;
+                align-items: flex-end;
+                padding: 0 32px;
+                position: relative;
+                flex-shrink: 0;
+            }
+            #menu-dora-shadow {
+                position: absolute;
+                bottom: 0;
+                left: 32px;
+                width: 150px;
+                height: 22px;
+                background: radial-gradient(
+                    ellipse,
+                    rgba(41, 171, 226, 0.4) 0%,
+                    transparent 70%
+                );
+                border-radius: 50%;
+                transform: translateX(-100px);
+                opacity: 0;
+                transition:
+                    transform 1s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    opacity 0.5s ease;
+            }
+            #menu-dora-shadow.walk {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            #menu-dora-sit {
+                width: 170px;
+                object-fit: contain;
+                flex-shrink: 0;
+                filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
+                transform: translateX(-120px);
+                opacity: 0;
+                transition:
+                    transform 1s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    opacity 0.5s ease;
+                margin-bottom: 10px;
+            }
+            #menu-dora-sit.walk {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            #menu-speech {
+                flex: 1;
+                padding: 0 24px 32px;
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(20px, 2.8vw, 32px);
+                font-weight: 800;
+                color: #29abe2;
+                line-height: 1.4;
+                transform: translateX(40px);
+                opacity: 0;
+                transition:
+                    transform 0.7s ease,
+                    opacity 0.6s ease;
+            }
+            #menu-speech.show {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            #menu-mic-bar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(41, 171, 226, 0.97);
+                padding: 12px 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                z-index: 55;
+                font-family: "Baloo 2", cursive;
+                font-size: 15px;
+                font-weight: 700;
+                color: white;
+                transform: translateY(100%);
+                transition: transform 0.4s ease;
+                backdrop-filter: blur(6px);
+            }
+            #menu-mic-bar.show {
+                transform: translateY(0);
+            }
+            #menu-mic-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: white;
+            }
+            #menu-mic-dot.active {
+                background: #ff4444;
+                animation: blink 1s infinite;
+            }
+
+            /* ══════════════════════════
+   MATERI SCREEN
+══════════════════════════ */
+            .mat-screen {
+                position: fixed;
+                inset: 0;
+                background: #e8f4fb;
+                display: flex;
+                flex-direction: column;
+                opacity: 0;
+                pointer-events: none;
+                z-index: 60;
+                transition: opacity 0.45s ease;
+            }
+            .mat-screen.show {
+                opacity: 1;
+                pointer-events: all;
+            }
+            .mat-wrap {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                margin: 24px;
+                background: white;
+                border-radius: 32px;
+                overflow: hidden;
+                box-shadow: 0 8px 48px rgba(41, 171, 226, 0.2);
+            }
+            .mat-tabs {
+                display: flex;
+                gap: 12px;
+                padding: 24px 28px 0;
+                background: white;
+                flex-shrink: 0;
+            }
+            .mat-tab {
+                background: #29abe2;
+                color: white;
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(13px, 1.6vw, 17px);
+                font-weight: 800;
+                padding: 12px 28px;
+                border-radius: 14px 14px 0 0;
+                cursor: pointer;
+                transition:
+                    background 0.2s,
+                    transform 0.15s;
+            }
+            .mat-tab:hover {
+                background: #1a8ec2;
+            }
+            .mat-tab.active {
+                background: #1a8ec2;
+                transform: translateY(-3px);
+            }
+            .mat-content {
+                background: white;
+                border-top: 5px solid #29abe2;
+                padding: 24px 32px 16px;
+                flex: 1;
+                overflow: auto;
+                transform: translateY(20px);
+                opacity: 0;
+                transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+            .mat-content.show {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            .mat-content h2 {
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(22px, 3vw, 36px);
+                font-weight: 800;
+                color: #29abe2;
+                margin-bottom: 16px;
+            }
+            .mat-bottom {
+                display: flex;
+                align-items: flex-end;
+                padding: 0 28px;
+                height: 160px;
+                flex-shrink: 0;
+                background: white;
+            }
+            .mat-dora {
+                width: 145px;
+                object-fit: contain;
+                flex-shrink: 0;
+                filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.12));
+                transform: translateY(40px);
+                opacity: 0;
+                transition:
+                    transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s,
+                    opacity 0.5s ease 0.3s;
+            }
+            .mat-dora.show {
+                transform: translateY(0);
+                opacity: 1;
+                animation: mat-bob 2.5s ease-in-out infinite;
+            }
+            @keyframes mat-bob {
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-12px);
+                }
+            }
+            .mat-bubble {
+                background: #29abe2;
+                color: white;
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(14px, 1.7vw, 18px);
+                font-weight: 700;
+                padding: 14px 20px;
+                border-radius: 4px 20px 20px 20px;
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+                margin-left: 16px;
+                margin-bottom: 22px;
+                max-width: 300px;
+                line-height: 1.6;
+                transform: scale(0);
+                opacity: 0;
+                transition:
+                    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 1.1s,
+                    opacity 0.4s ease 1.1s;
+            }
+            .mat-bubble.show {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            /* ══════════════════════════
+   VOICE HUD
+══════════════════════════ */
+            #voice-hud {
+                position: fixed;
+                top: 16px;
+                left: 50%;
+                transform: translateX(-50%) translateY(-70px);
+                background: rgba(10, 30, 55, 0.92);
+                color: white;
+                border-radius: 40px;
+                padding: 10px 26px;
+                font-size: 15px;
+                font-weight: 700;
+                font-family: "Baloo 2", cursive;
+                z-index: 200;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                backdrop-filter: blur(12px);
+                border: 1px solid rgba(93, 200, 240, 0.3);
+                white-space: nowrap;
+            }
+            #voice-hud.show {
+                transform: translateX(-50%) translateY(0);
+            }
+            #hud-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: #ff4444;
+                animation: blink 1s infinite;
+            }
+            #toast {
+                position: fixed;
+                bottom: 80px;
+                left: 50%;
+                transform: translateX(-50%) translateY(80px);
+                background: rgba(10, 30, 55, 0.96);
+                color: white;
+                padding: 12px 28px;
+                border-radius: 40px;
+                font-size: 15px;
+                font-weight: 700;
+                z-index: 300;
+                transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+                backdrop-filter: blur(10px);
+                white-space: nowrap;
+            }
+            #toast.show {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            /* ══════════════════════════
+   SHARED BUTTON
+══════════════════════════ */
+            .play-btn {
+                background: #29abe2;
+                color: white;
+                border: none;
+                border-radius: 50px;
+                padding: 11px 22px;
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(13px, 1.6vw, 16px);
+                font-weight: 800;
+                cursor: pointer;
+                transition:
+                    background 0.2s,
+                    transform 0.15s;
+                box-shadow: 0 4px 14px rgba(41, 171, 226, 0.35);
+            }
+            .play-btn:hover {
+                background: #1a8ec2;
+                transform: scale(1.03);
+            }
+            .play-btn:disabled {
+                opacity: 0.55;
+                cursor: not-allowed;
+                transform: none !important;
+            }
+            .btn-green {
+                background: #4caf50 !important;
+                box-shadow: 0 4px 14px rgba(76, 175, 80, 0.35) !important;
+            }
+            .btn-green:hover {
+                background: #388e3c !important;
+            }
+
+            /* ══════════════════════════
+   MATERI 1 — NUMBER GRID
+══════════════════════════ */
+            .num-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+                margin-bottom: 16px;
+            }
+            .num-card {
+                background: #e8f4fb;
+                border-radius: 14px;
+                padding: 10px 6px;
+                text-align: center;
+                border: 3px solid transparent;
+                cursor: pointer;
+                user-select: none;
+                transition: all 0.22s ease;
+            }
+            .num-card:hover {
+                background: #c5dff0;
+                transform: scale(1.05);
+            }
+            .num-card.active {
+                background: #29abe2;
+                border-color: #1a8ec2;
+                transform: scale(1.1);
+                box-shadow: 0 4px 14px rgba(41, 171, 226, 0.4);
+            }
+            .num-digit {
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(18px, 2.6vw, 30px);
+                font-weight: 900;
+                color: #29abe2;
+                display: block;
+                line-height: 1;
+            }
+            .num-card.active .num-digit {
+                color: white;
+            }
+            .num-word {
+                font-family: "Nunito", sans-serif;
+                font-size: clamp(8px, 1vw, 12px);
+                font-weight: 700;
+                color: #555;
+                display: block;
+                margin-top: 3px;
+            }
+            .num-card.active .num-word {
+                color: rgba(255, 255, 255, 0.9);
+            }
+
+            /* ══════════════════════════
+   MATERI 2 — SYMBOL CARDS
+══════════════════════════ */
+            .sym-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+            }
+            .sym-card {
+                background: #e8f4fb;
+                border-radius: 20px;
+                padding: 22px 14px;
+                text-align: center;
+                border: 4px solid #29abe2;
+                transition:
+                    transform 0.2s,
+                    box-shadow 0.2s;
+            }
+            .sym-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 24px rgba(41, 171, 226, 0.25);
+            }
+            .sym-symbol {
+                display: block;
+                font-size: clamp(40px, 7vw, 72px);
+                font-family: "Baloo 2", cursive;
+                font-weight: 900;
+                color: #29abe2;
+                line-height: 1;
+                margin-bottom: 10px;
+            }
+            .sym-name {
+                display: block;
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(13px, 1.6vw, 18px);
+                font-weight: 800;
+                color: #1a8ec2;
+                margin-bottom: 8px;
+            }
+            .sym-desc {
+                font-size: clamp(11px, 1.2vw, 13px);
+                color: #555;
+                line-height: 1.65;
+            }
+            .sym-desc strong {
+                color: #29abe2;
+            }
+
+            /* ══════════════════════════
+   MATERI 3 — SOAL VISUAL
+══════════════════════════ */
+            .soal-wrap {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 14px;
+            }
+            .soal-question {
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(14px, 1.9vw, 20px);
+                font-weight: 800;
+                color: #333;
+                text-align: center;
+                line-height: 1.4;
+            }
+            .soal-visual {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 18px;
+                flex-wrap: wrap;
+                min-height: 130px;
+            }
+            .soal-heads {
+                display: flex;
+                gap: 6px;
+                align-items: center;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .soal-head-img {
+                width: clamp(100px, 13vw, 150px);
+                height: clamp(100px, 13vw, 150px);
+                object-fit: contain;
+                animation: head-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+            }
+            /* Kepala yang dikurangi — abu-abu & transparan */
+            .soal-head-img.remove {
+                opacity: 0.35;
+                filter: grayscale(90%);
+            }
+            @keyframes head-pop {
+                from {
+                    transform: scale(0) rotate(-10deg);
+                    opacity: 0;
+                }
+                to {
+                    transform: scale(1) rotate(0deg);
+                    opacity: 1;
+                }
+            }
+            .soal-op {
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(44px, 7vw, 72px);
+                font-weight: 900;
+                color: #29abe2;
+                line-height: 1;
+                flex-shrink: 0;
+            }
+            .soal-answer-box {
+                background: #29abe2;
+                color: white;
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(44px, 7vw, 72px);
+                font-weight: 900;
+                width: clamp(100px, 13vw, 150px);
+                height: clamp(100px, 13vw, 150px);
+                border-radius: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transform: scale(0);
+                opacity: 0;
+                flex-shrink: 0;
+                transition:
+                    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    opacity 0.3s ease;
+            }
+            .soal-answer-box.show {
+                transform: scale(1);
+                opacity: 1;
+            }
+            .soal-answer-word {
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(18px, 2.6vw, 28px);
+                font-weight: 800;
+                color: #1a8ec2;
+                text-align: center;
+                opacity: 0;
+                transition: opacity 0.4s ease 0.4s;
+            }
+            .soal-answer-word.show {
+                opacity: 1;
+            }
+            .soal-nav {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .soal-counter {
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(12px, 1.4vw, 15px);
+                font-weight: 700;
+                color: #bbb;
+            }
+
+            /* ── Layar Mulai ── */
+            #soal-start {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+                padding: 24px 0;
+                text-align: center;
+            }
+            #soal-start p {
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(15px, 1.9vw, 20px);
+                font-weight: 700;
+                color: #555;
+                line-height: 1.7;
+            }
+            .btn-start {
+                background: #4caf50;
+                color: white;
+                border: none;
+                border-radius: 50px;
+                padding: 16px 44px;
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(18px, 2.5vw, 26px);
+                font-weight: 800;
+                cursor: pointer;
+                box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+                animation: pulse-start 1.6s ease-in-out infinite;
+            }
+            .btn-start:hover {
+                background: #388e3c;
+            }
+            @keyframes pulse-start {
+                0%,
+                100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.06);
+                }
+            }
+
+            /* ── Feedback Benar / Salah ── */
+            .soal-feedback {
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(16px, 2.2vw, 24px);
+                font-weight: 800;
+                text-align: center;
+                padding: 10px 24px;
+                border-radius: 16px;
+                min-height: 48px;
+                opacity: 0;
+                transform: scale(0.8);
+                transition:
+                    opacity 0.3s ease,
+                    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+            .soal-feedback.show {
+                opacity: 1;
+                transform: scale(1);
+            }
+            .soal-feedback.correct {
+                color: #2e7d32;
+                background: #e8f5e9;
+            }
+            .soal-feedback.wrong {
+                color: #c62828;
+                background: #ffebee;
+            }
+
+            /* ── Opsi Pilihan Jawaban ── */
+            .soal-options {
+                display: flex;
+                gap: 16px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .soal-option-btn {
+                width: clamp(75px, 11vw, 110px);
+                height: clamp(75px, 11vw, 110px);
+                border-radius: 20px;
+                border: 4px solid #29abe2;
+                background: white;
+                font-family: "Baloo 2", cursive;
+                font-size: clamp(28px, 4.5vw, 48px);
+                font-weight: 900;
+                color: #29abe2;
+                cursor: pointer;
+                transition: all 0.18s ease;
+                box-shadow: 0 3px 10px rgba(41, 171, 226, 0.15);
+            }
+            .soal-option-btn:hover:not(:disabled) {
+                background: #29abe2;
+                color: white;
+                transform: scale(1.1);
+                box-shadow: 0 6px 18px rgba(41, 171, 226, 0.4);
+            }
+            .soal-option-btn.correct {
+                background: #4caf50 !important;
+                border-color: #4caf50 !important;
+                color: white !important;
+                transform: scale(1.12);
+            }
+            .soal-option-btn.wrong-pick {
+                background: #f44336 !important;
+                border-color: #f44336 !important;
+                color: white !important;
+                animation: shake 0.4s ease;
+            }
+            @keyframes shake {
+                0%,
+                100% {
+                    transform: translateX(0);
+                }
+                25% {
+                    transform: translateX(-6px);
+                }
+                75% {
+                    transform: translateX(6px);
+                }
+            }
+            .soal-option-btn:disabled {
+                cursor: default;
+                opacity: 0.55;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- PERMISSION SPLASH -->
+        <div id="perm-splash">
+            <div id="perm-card">
+                <img
+                    id="perm-dora"
+                    src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
+                    onerror="this.style.display = 'none'"
+                    alt=""
+                />
+                <h2>Izinkan Mikrofon 🎤</h2>
+                <p>
+                    Doraemon perlu mendengar suaramu untuk memilih materi
+                    belajar. Tekan tombol lalu klik <strong>"Allow"</strong> di
+                    browser.
+                </p>
+                <button id="perm-allow-btn" onclick="requestMicPermission()">
+                    🎤 Izinkan Mikrofon
+                </button>
+            </div>
+            <button id="perm-skip-btn" onclick="skipPermission()">
+                Lanjut tanpa suara (klik manual)
+            </button>
+            <div id="perm-status"></div>
+        </div>
+
+        <!-- INTRO STAGE -->
+        <div id="stage">
+            <div id="h-line"></div>
+            <div id="ring"></div>
+            <img
+                id="dora-intro"
+                src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
+                onerror="
+                    this.src =
+                        'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 90%22><ellipse cx=%2240%22 cy=%2244%22 rx=%2238%22 ry=%2240%22 fill=%22%2300a0e9%22/></svg>'
+                "
+                alt=""
+            />
+            <div id="intro-text">
+                HALO SEMUANYA AYO BELAJAR BERSAMA DORAEMON
+            </div>
+            <div id="intro-mic-bar">
+                <div class="mic-dot" id="intro-dot" style="opacity: 0"></div>
+                <span id="intro-mic-lbl">Bersiap...</span>
+            </div>
+        </div>
+
+        <!-- MENU SCREEN -->
+        <div id="screen-menu">
+            <div id="menu-wrap">
+                <div id="menu-tiles">
+                    <div class="menu-tile" id="mt1" onclick="openMateri(1)">
+                        Materi 1<br /><small>Mengenal Bilangan</small>
+                    </div>
+                    <div class="menu-tile" id="mt2" onclick="openMateri(2)">
+                        Materi 2<br /><small>Simbol Matematika</small>
+                    </div>
+                    <div class="menu-tile" id="mt3" onclick="openMateri(3)">
+                        Materi 3<br /><small>Latihan Berhitung</small>
+                    </div>
+                </div>
+                <div id="menu-bottom">
+                    <div id="menu-dora-shadow"></div>
+                    <img
+                        id="menu-dora-sit"
+                        src="https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png"
+                        onerror="this.style.display = 'none'"
+                        alt=""
+                    />
+                    <div id="menu-speech">Mau belajar<br />apa hari ini?</div>
+                </div>
+            </div>
+        </div>
+        <div id="menu-mic-bar">
+            <div id="menu-mic-dot"></div>
+            <span id="menu-mic-lbl"
+                >Ucapkan "Materi Satu", "Materi Dua", atau "Materi Tiga"</span
+            >
+        </div>
+
+        <!-- ═══════════════════════════════════════
+     MATERI 1 — BILANGAN 1–20
+═══════════════════════════════════════ -->
+        <div class="mat-screen" id="ms1">
+            <div class="mat-wrap">
+                <div class="mat-tabs">
+                    <div class="mat-tab active">Materi 1</div>
+                    <div class="mat-tab" onclick="openMateri(2)">Materi 2</div>
+                    <div class="mat-tab" onclick="openMateri(3)">Materi 3</div>
+                </div>
+                <div class="mat-content" id="mc1">
+                    <h2>Mengenal Bilangan 1 – 20</h2>
+                    <div class="num-grid" id="num-grid"></div>
+                    <button
+                        class="play-btn"
+                        id="play-num-btn"
+                        onclick="speakNumbersM1()"
+                    >
+                        🔊 Dengarkan Satu per Satu
+                    </button>
+                </div>
+                <div class="mat-bottom">
+                    <img
+                        class="mat-dora"
+                        id="md1"
+                        src="assets/kepala3.png"
+                        alt="Doraemon"
+                    />
+                    <div class="mat-bubble" id="mb1">
+                        Yuk kenalan sama<br />angka 1 sampai 20! 🎉
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+     MATERI 2 — SIMBOL MATEMATIKA
+═══════════════════════════════════════ -->
+        <div class="mat-screen" id="ms2">
+            <div class="mat-wrap">
+                <div class="mat-tabs">
+                    <div class="mat-tab" onclick="openMateri(1)">Materi 1</div>
+                    <div class="mat-tab active">Materi 2</div>
+                    <div class="mat-tab" onclick="openMateri(3)">Materi 3</div>
+                </div>
+                <div class="mat-content" id="mc2">
+                    <h2>Mengenal Simbol Matematika</h2>
+                    <div class="sym-grid">
+                        <div class="sym-card">
+                            <span class="sym-symbol">+</span>
+                            <span class="sym-name">Tanda Tambah</span>
+                            <p class="sym-desc">
+                                Bentuknya seperti <strong>palang</strong>.<br />
+                                Digunakan untuk <strong>menggabungkan</strong>
+                                dua bilangan menjadi satu.
+                            </p>
+                        </div>
+
+                        <div class="sym-card">
+                            <span class="sym-symbol">−</span>
+                            <span class="sym-name">Tanda Kurang</span>
+                            <p class="sym-desc">
+                                Bentuknya seperti
+                                <strong>garis mendatar</strong>.<br />
+                                Digunakan untuk <strong>mengambil</strong>
+                                sebagian dari suatu bilangan.
+                            </p>
+                        </div>
+
+                        <div class="sym-card">
+                            <span class="sym-symbol">=</span>
+                            <span class="sym-name">Tanda Sama Dengan</span>
+                            <p class="sym-desc">
+                                Bentuknya
+                                <strong>dua garis sejajar</strong>.<br />
+                                Artinya <strong>hasilnya adalah</strong>...
+                                menunjukkan jawaban perhitungan.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mat-bottom">
+                    <img
+                        class="mat-dora"
+                        id="md2"
+                        src="assets/kepala2.png"
+                        alt="Doraemon"
+                    />
+                    <div class="mat-bubble" id="mb2">
+                        Ini dia simbol-simbol<br />matematika! 📐
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════
+     MATERI 3 — LATIHAN PENJUMLAHAN
+═══════════════════════════════════════ -->
+        <div class="mat-screen" id="ms3">
+            <div class="mat-wrap">
+                <div class="mat-tabs">
+                    <div class="mat-tab" onclick="openMateri(1)">Materi 1</div>
+                    <div class="mat-tab" onclick="openMateri(2)">Materi 2</div>
+                    <div class="mat-tab active">Materi 3</div>
+                </div>
+                <div class="mat-content" id="mc3">
+                    <h2>Latihan Matematika</h2>
+                    <!-- Layar mulai — muncul saat materi 3 dibuka -->
+                    <div id="soal-start">
+                        <p>
+                            Siap untuk latihan berhitung?<br />
+                            Tekan tombol atau ucapkan
+                            <strong>“Mulai”</strong>!
+                        </p>
+                        <button class="btn-start" onclick="startSoalM3()">
+                            ▶️ Mulai Latihan
+                        </button>
+                    </div>
+
+                    <!-- Area soal — muncul setelah mulai -->
+                    <div
+                        class="soal-wrap"
+                        id="soal-wrap-inner"
+                        style="display: none"
+                    >
+                        <div class="soal-question" id="soal-question">
+                            Coba hitung, ada berapa kepala Doraemon? 🤔
+                        </div>
+
+                        <div class="soal-visual" id="soal-visual">
+                            <div class="soal-heads" id="soal-left"></div>
+                            <div class="soal-op" id="soal-op-sign">+</div>
+                            <div class="soal-heads" id="soal-right"></div>
+                            <div class="soal-op">=</div>
+                            <div
+                                class="soal-answer-box"
+                                id="soal-ans-box"
+                            ></div>
+                        </div>
+
+                        <!-- 3 Opsi pilihan jawaban -->
+                        <div class="soal-options" id="soal-options"></div>
+
+                        <div class="soal-answer-word" id="soal-ans-word"></div>
+
+                        <!-- Feedback benar / salah -->
+                        <div class="soal-feedback" id="soal-feedback"></div>
+
+                        <div class="soal-nav">
+                            <button
+                                class="play-btn"
+                                id="btn-jawab"
+                                onclick="showAnswerM3()"
+                            >
+                                💡 Lihat Jawaban
+                            </button>
+                            <button
+                                class="play-btn btn-green"
+                                id="btn-next"
+                                onclick="nextSoal()"
+                                style="display: none"
+                            >
+                                Soal Berikutnya ➡️
+                            </button>
+                        </div>
+
+                        <div class="soal-counter" id="soal-counter">
+                            Soal 1 dari 8
+                        </div>
+                    </div>
+                </div>
+                <div class="mat-bottom">
+                    <img
+                        class="mat-dora"
+                        id="md3"
+                        src="assets/kepala3.png"
+                        alt="Doraemon"
+                    />
+                    <div class="mat-bubble" id="mb3">
+                        Penjumlahan &amp; pengurangan<br />yuk kita coba! 🧮
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VOICE HUD -->
+        <div id="voice-hud">
+            <div id="hud-dot"></div>
+            <span id="hud-txt">Mendengarkan...</span>
+        </div>
+        <div id="toast"></div>
+
+        <script>
+            // ══════════════════════════════════════════════
+            // SPEECH SYNTHESIS
+            // ══════════════════════════════════════════════
+            const synth = window.speechSynthesis;
+            let voices = [];
+            const loadV = () => {
+                voices = synth.getVoices();
+            };
+            synth.onvoiceschanged = loadV;
+            setTimeout(loadV, 400);
+
+            // ══════════════════════════════════════════════
+            // DATA
+            // ══════════════════════════════════════════════
+            const numberWords = [
+                "Nol",
+                "Satu",
+                "Dua",
+                "Tiga",
+                "Empat",
+                "Lima",
+                "Enam",
+                "Tujuh",
+                "Delapan",
+                "Sembilan",
+                "Sepuluh",
+                "Sebelas",
+                "Dua Belas",
+                "Tiga Belas",
+                "Empat Belas",
+                "Lima Belas",
+                "Enam Belas",
+                "Tujuh Belas",
+                "Delapan Belas",
+                "Sembilan Belas",
+                "Dua Puluh",
+            ];
+
+            // Map nomor → file audio lokal materi 1
+            const numberAudioMap = [
+                null,
+                "assets/suara/materi1/satu.wav",
+                "assets/suara/materi1/dua.wav",
+                "assets/suara/materi1/tiga.wav",
+                "assets/suara/materi1/empat.wav",
+                "assets/suara/materi1/lima.wav",
+                "assets/suara/materi1/enam.wav",
+                "assets/suara/materi1/tujuh.wav",
+                "assets/suara/materi1/delapan.wav",
+                "assets/suara/materi1/sembilan.wav",
+                "assets/suara/materi1/sepuluh.wav",
+                "assets/suara/materi1/sebelas.wav",
+                "assets/suara/materi1/duabelas.wav",
+                "assets/suara/materi1/tigabelas.wav",
+                "assets/suara/materi1/empatbelas.wav",
+                "assets/suara/materi1/limabelas.wav",
+                "assets/suara/materi1/enambelas.wav",
+                "assets/suara/materi1/tujuhbelas.wav",
+                "assets/suara/materi1/delapanbelas.wav",
+                "assets/suara/materi1/sembilanbelas.wav",
+                "assets/suara/materi1/duapuluh.wav",
+            ];
+
+            const soalList = [
+                // ── Penjumlahan (8 soal) ──
+                { a: 1, b: 1, op: "+" },
+                { a: 2, b: 1, op: "+" },
+                { a: 1, b: 2, op: "+" },
+                { a: 2, b: 2, op: "+" },
+                { a: 3, b: 1, op: "+" },
+                { a: 1, b: 3, op: "+" },
+                { a: 3, b: 2, op: "+" },
+                { a: 2, b: 3, op: "+" },
+                // ── Pengurangan (12 soal) ──
+                { a: 2, b: 1, op: "-" },
+                { a: 3, b: 1, op: "-" },
+                { a: 3, b: 2, op: "-" },
+                { a: 4, b: 1, op: "-" },
+                { a: 4, b: 2, op: "-" },
+                { a: 4, b: 3, op: "-" },
+                { a: 5, b: 1, op: "-" },
+                { a: 5, b: 2, op: "-" },
+                { a: 5, b: 3, op: "-" },
+                { a: 5, b: 4, op: "-" },
+                { a: 6, b: 2, op: "-" },
+                { a: 6, b: 3, op: "-" },
+            ];
+
+            // Audio materi 3 — narasi soal (soal 1-8 .wav, soal 9-20 .Mp3)
+            const soalAudioMap = [
+                "assets/suara/materi3/soal1.wav",
+                "assets/suara/materi3/soal2.wav",
+                "assets/suara/materi3/soal3.wav",
+                "assets/suara/materi3/soal4.wav",
+                "assets/suara/materi3/soal5.wav",
+                "assets/suara/materi3/soal6.wav",
+                "assets/suara/materi3/soal7.wav",
+                "assets/suara/materi3/soal8.wav",
+                "assets/suara/materi3/Soal 9.Mp3",
+                "assets/suara/materi3/Soal 10.Mp3",
+                "assets/suara/materi3/Soal 11.Mp3",
+                "assets/suara/materi3/Soal 12.Mp3",
+                "assets/suara/materi3/Soal 13.Mp3",
+                "assets/suara/materi3/Soal 14.Mp3",
+                "assets/suara/materi3/Soal 15.Mp3",
+                "assets/suara/materi3/Soal 16.Mp3",
+                "assets/suara/materi3/Soal 17.Mp3",
+                "assets/suara/materi3/Soal 18.Mp3",
+                "assets/suara/materi3/Soal 19.Mp3",
+                "assets/suara/materi3/Soal 20.Mp3",
+            ];
+
+            // Audio materi 3 — jawaban (jawaban 1-8 .wav, jawaban 9-20 .Mp3)
+            const jawabanAudioMap = [
+                "assets/suara/materi3/jawaban1.wav",
+                "assets/suara/materi3/jawaban2.wav",
+                "assets/suara/materi3/jawaban3.wav",
+                "assets/suara/materi3/jawaban4.wav",
+                "assets/suara/materi3/jawaban5.wav",
+                "assets/suara/materi3/jawaban6.wav",
+                "assets/suara/materi3/jawaban7.wav",
+                "assets/suara/materi3/jawaban8.wav",
+                "assets/suara/materi3/Jawaban soal 9.Mp3",
+                "assets/suara/materi3/Jawaban soal 10.Mp3",
+                "assets/suara/materi3/Jawaban soal 11.Mp3",
+                "assets/suara/materi3/Jawaban soal 12.Mp3",
+                "assets/suara/materi3/Jawaban soal 13.Mp3",
+                "assets/suara/materi3/Jawaban soal 14.Mp3",
+                "assets/suara/materi3/Jawaban soal 15.Mp3",
+                "assets/suara/materi3/Jawaban soal 16.Mp3",
+                "assets/suara/materi3/Jawaban soal 17.Mp3",
+                "assets/suara/materi3/Jawaban soal 18.Mp3",
+                "assets/suara/materi3/Jawaban soal 19.Mp3",
+                "assets/suara/materi3/Jawaban soal 20.Mp3",
+            ];
+
+            // ══════════════════════════════════════════════
+            // INTRO ANIMATION
+            // ══════════════════════════════════════════════
+            const stage = document.getElementById("stage");
+            const hLine = document.getElementById("h-line");
+            const ring = document.getElementById("ring");
+            const doraImg = document.getElementById("dora-intro");
+            const introTxt = document.getElementById("intro-text");
+            const introBar = document.getElementById("intro-mic-bar");
+            const introDot = document.getElementById("intro-dot");
+            let menuReady = false;
+
+            function runIntro() {
+                const vw = window.innerWidth,
+                    vh = window.innerHeight;
+                const circSm = Math.min(vw, vh) * 0.36;
+                const circLg = Math.min(vw, vh) * 0.6;
+
+                setTimeout(() => {
+                    hLine.style.opacity = "1";
+                    hLine.style.transition =
+                        "width .75s cubic-bezier(.4,0,.2,1)";
+                    hLine.style.width = "82%";
+                }, 200);
+
+                setTimeout(() => {
+                    ring.style.opacity = "1";
+                    ring.style.transition =
+                        "width .65s cubic-bezier(.34,1.56,.64,1), height .65s cubic-bezier(.34,1.56,.64,1)";
+                    ring.style.width = ring.style.height = circSm + "px";
+                }, 950);
+
+                setTimeout(() => {
+                    doraImg.style.width = doraImg.style.height =
+                        circSm * 0.72 + "px";
+                    doraImg.style.transition =
+                        "opacity .3s, transform .65s cubic-bezier(.34,1.56,.64,1), width .4s, height .4s";
+                    doraImg.style.opacity = "1";
+                    doraImg.style.transform = "translate(-50%,-50%) scale(1)";
+                }, 1900);
+
+                setTimeout(() => {
+                    ring.style.transition =
+                        "width .8s cubic-bezier(.34,1.56,.64,1), height .8s cubic-bezier(.34,1.56,.64,1)";
+                    ring.style.width = ring.style.height = circLg + "px";
+                    doraImg.style.width = doraImg.style.height =
+                        circLg * 0.68 + "px";
+                    introTxt.style.transition = "opacity .7s ease .2s";
+                    introTxt.style.opacity = "1";
+                    introBar.style.transition = "opacity .6s ease .4s";
+                    introBar.style.opacity = "1";
+
+                    playAudio("assets/suara/intro.wav", () => {
+                        let count = 5;
+                        document.getElementById("intro-mic-lbl").textContent =
+                            `Bersiap... ${count} detik`;
+                        const t = setInterval(() => {
+                            count--;
+                            if (count > 0) {
+                                document.getElementById(
+                                    "intro-mic-lbl",
+                                ).textContent = `Bersiap... ${count} detik`;
+                            } else {
+                                clearInterval(t);
+                                introDot.style.opacity = "1";
+                                document.getElementById(
+                                    "intro-mic-lbl",
+                                ).textContent = "🎤 Bicara sekarang!";
+                                startListen("intro");
+                            }
+                        }, 1000);
+                    });
+                }, 2900);
+            }
+
+            // ══════════════════════════════════════════════
+            // TRANSITION TO MENU
+            // ══════════════════════════════════════════════
+            function toMenu() {
+                if (menuReady) return;
+                menuReady = true;
+                synth.cancel();
+                killRec();
+
+                const diag =
+                    Math.sqrt(
+                        window.innerWidth ** 2 + window.innerHeight ** 2,
+                    ) * 1.1;
+                ring.style.transition =
+                    "width .7s ease-in, height .7s ease-in, background .6s ease-in, border-color .6s";
+                ring.style.width = ring.style.height = diag + "px";
+                ring.style.background = "white";
+                ring.style.borderColor = "white";
+
+                [hLine, introTxt, introBar, doraImg].forEach((el) => {
+                    el.style.transition = "opacity .3s ease";
+                    el.style.opacity = "0";
+                });
+
+                setTimeout(() => {
+                    document
+                        .getElementById("screen-menu")
+                        .classList.add("show");
+                    animateMenu();
+                }, 660);
+            }
+
+            // ══════════════════════════════════════════════
+            // MENU ANIMATION
+            // ══════════════════════════════════════════════
+            function animateMenu() {
+                ["mt1", "mt2", "mt3"].forEach((id) =>
+                    document.getElementById(id).classList.remove("drop"),
+                );
+                document
+                    .getElementById("menu-dora-sit")
+                    .classList.remove("walk");
+                document
+                    .getElementById("menu-dora-shadow")
+                    .classList.remove("walk");
+                document.getElementById("menu-speech").classList.remove("show");
+
+                setTimeout(
+                    () => document.getElementById("mt3").classList.add("drop"),
+                    100,
+                );
+                setTimeout(
+                    () => document.getElementById("mt2").classList.add("drop"),
+                    260,
+                );
+                setTimeout(
+                    () => document.getElementById("mt1").classList.add("drop"),
+                    420,
+                );
+
+                setTimeout(() => {
+                    document
+                        .getElementById("menu-dora-sit")
+                        .classList.add("walk");
+                    document
+                        .getElementById("menu-dora-shadow")
+                        .classList.add("walk");
+                }, 700);
+
+                setTimeout(() => {
+                    document
+                        .getElementById("menu-speech")
+                        .classList.add("show");
+                    document
+                        .getElementById("menu-mic-bar")
+                        .classList.add("show");
+                    playAudio("assets/suara/materi-apa.wav", () => {
+                        setTimeout(() => startListen("menu"), 400);
+                    });
+                }, 1300);
+            }
+
+            // ══════════════════════════════════════════════
+            // MATERI — OPEN / BACK
+            // ══════════════════════════════════════════════
+            const speechMap = {
+                1: "Yuk kita belajar bilangan satu sampai dua puluh! Kamu bisa klik tiap angka, atau tekan tombol dengarkan untuk mendengar semua angka satu per satu!",
+                2: "Ini dia simbol-simbol matematika! Ada tanda tambah, tanda kurang, dan tanda sama dengan. Aku akan jelaskan satu per satu ya!",
+                3: "Waktunya latihan hitung! Ada penjumlahan dan pengurangan. Coba kamu hitung kepala Doraemon ya!",
+            };
+
+            function openMateri(n) {
+                synth.cancel();
+                killRec();
+                numSpeaking = false; // hentikan pembacaan angka jika sedang berjalan
+                document.getElementById("play-num-btn").textContent =
+                    "🔊 Dengarkan Satu per Satu";
+                document
+                    .querySelectorAll(".num-card")
+                    .forEach((c) => c.classList.remove("active"));
+
+                document
+                    .querySelectorAll(".mat-screen")
+                    .forEach((s) => s.classList.remove("show"));
+                const ms = document.getElementById("ms" + n);
+                const mc = document.getElementById("mc" + n);
+                const md = document.getElementById("md" + n);
+                const mb = document.getElementById("mb" + n);
+                [mc, md, mb].forEach((el) => el.classList.remove("show"));
+                ms.classList.add("show");
+
+                setTimeout(() => mc.classList.add("show"), 100);
+                setTimeout(() => md.classList.add("show"), 350);
+                setTimeout(() => mb.classList.add("show"), 450);
+
+                document
+                    .getElementById("menu-mic-bar")
+                    .classList.remove("show");
+                showHUD("⏳ Memuat...");
+
+                // Inisialisasi soal sebelum animasi (Materi 3)
+                if (n === 3) initSoalM3();
+
+                setTimeout(() => {
+                    if (n === 1) {
+                        playAudio(
+                            "assets/suara/materi1/kamubisamenekanataubicara.wav",
+                            () => setTimeout(() => startListen("materi1"), 400),
+                        );
+                    } else if (n === 2) {
+                        playAudio(
+                            "assets/suara/materi2/inidiaoperator-intro.wav",
+                            () => speakSymbolsM2(),
+                        );
+                    } else if (n === 3) {
+                        playAudio("assets/suara/materi3/pembuka.wav", () =>
+                            setTimeout(() => startListen("materi3"), 400),
+                        );
+                    } else {
+                        speak(speechMap[n], () => {
+                            setTimeout(() => startListen("materi"), 400);
+                        });
+                    }
+                }, 300);
+            }
+
+            function backToMenu() {
+                synth.cancel();
+                killAudio();
+                killRec();
+                numSpeaking = false;
+                document.getElementById("play-num-btn").textContent =
+                    "🔊 Dengarkan Satu per Satu";
+                document
+                    .querySelectorAll(".num-card")
+                    .forEach((c) => c.classList.remove("active"));
+                document
+                    .querySelectorAll(".mat-screen")
+                    .forEach((s) => s.classList.remove("show"));
+                hideHUD();
+                document.getElementById("menu-mic-bar").classList.add("show");
+                setDebug("🔄 Kembali ke menu...");
+                setTimeout(() => {
+                    speak("Kembali ke menu!", () =>
+                        setTimeout(() => startListen("menu"), 400),
+                    );
+                }, 200);
+            }
+
+            // ══════════════════════════════════════════════
+            // MATERI 1 — BILANGAN 1–20
+            // ══════════════════════════════════════════════
+
+            // Deteksi angka 1-20 dari teks suara
+            function detectNumber(t) {
+                if (
+                    t.includes("dua puluh") ||
+                    t.includes("duapuluh") ||
+                    /\b20\b/.test(t)
+                )
+                    return 20;
+                if (
+                    t.includes("sembilan belas") ||
+                    t.includes("sembilanbelas") ||
+                    /\b19\b/.test(t)
+                )
+                    return 19;
+                if (
+                    t.includes("delapan belas") ||
+                    t.includes("delapanbelas") ||
+                    /\b18\b/.test(t)
+                )
+                    return 18;
+                if (
+                    t.includes("tujuh belas") ||
+                    t.includes("tujuhbelas") ||
+                    /\b17\b/.test(t)
+                )
+                    return 17;
+                if (
+                    t.includes("enam belas") ||
+                    t.includes("enambelas") ||
+                    /\b16\b/.test(t)
+                )
+                    return 16;
+                if (
+                    t.includes("lima belas") ||
+                    t.includes("limabelas") ||
+                    /\b15\b/.test(t)
+                )
+                    return 15;
+                if (
+                    t.includes("empat belas") ||
+                    t.includes("empatbelas") ||
+                    /\b14\b/.test(t)
+                )
+                    return 14;
+                if (
+                    t.includes("tiga belas") ||
+                    t.includes("tigabelas") ||
+                    /\b13\b/.test(t)
+                )
+                    return 13;
+                if (
+                    t.includes("dua belas") ||
+                    t.includes("duabelas") ||
+                    /\b12\b/.test(t)
+                )
+                    return 12;
+                if (t.includes("sebelas") || /\b11\b/.test(t)) return 11;
+                if (t.includes("sepuluh") || /\b10\b/.test(t)) return 10;
+                if (t.includes("sembilan") || /\b9\b/.test(t)) return 9;
+                if (t.includes("delapan") || /\b8\b/.test(t)) return 8;
+                if (t.includes("tujuh") || /\b7\b/.test(t)) return 7;
+                if (t.includes("enam") || /\b6\b/.test(t)) return 6;
+                if (t.includes("lima") || /\b5\b/.test(t)) return 5;
+                if (t.includes("empat") || /\b4\b/.test(t)) return 4;
+                if (t.includes("tiga") || /\b3\b/.test(t)) return 3;
+                if (t.includes("dua") || /\b2\b/.test(t)) return 2;
+                if (t.includes("satu") || /\b1\b/.test(t)) return 1;
+                return null;
+            }
+
+            // Aktifkan kartu angka dari voice
+            function activateNumCard(n) {
+                if (numSpeaking) {
+                    numSpeaking = false;
+                    numStopFlag = true;
+                    document.getElementById("play-num-btn").textContent =
+                        "🔊 Dengarkan Satu per Satu";
+                }
+                document
+                    .querySelectorAll(".num-card")
+                    .forEach((c) => c.classList.remove("active"));
+                const card = document.getElementById("num-card-" + n);
+                if (card) {
+                    card.classList.add("active");
+                    card.scrollIntoView({
+                        behavior: "smooth",
+                        block: "nearest",
+                    });
+                }
+                playAudio(numberAudioMap[n], () => {
+                    setTimeout(() => {
+                        if (card) card.classList.remove("active");
+                        startListen("materi1");
+                    }, 500);
+                });
+            }
+
+            let numSpeaking = false;
+            let numStopFlag = false;
+
+            function initNumGrid() {
+                const grid = document.getElementById("num-grid");
+                if (!grid || grid.children.length > 0) return;
+
+                for (let i = 1; i <= 20; i++) {
+                    const n = i; // capture
+                    const card = document.createElement("div");
+                    card.className = "num-card";
+                    card.id = "num-card-" + n;
+                    card.innerHTML = `<span class="num-digit">${n}</span><span class="num-word">${numberWords[n]}</span>`;
+                    card.addEventListener("click", () => {
+                        // Hentikan sequence jika sedang berjalan
+                        if (numSpeaking) {
+                            numSpeaking = false;
+                            numStopFlag = true;
+                            document.getElementById(
+                                "play-num-btn",
+                            ).textContent = "🔊 Dengarkan Satu per Satu";
+                        }
+                        document
+                            .querySelectorAll(".num-card")
+                            .forEach((c) => c.classList.remove("active"));
+                        card.classList.add("active");
+                        killAudio();
+                        synth.cancel();
+                        playAudio(numberAudioMap[n], () => {
+                            setTimeout(
+                                () => card.classList.remove("active"),
+                                500,
+                            );
+                        });
+                    });
+                    grid.appendChild(card);
+                }
+            }
+
+            function speakNumbersM1() {
+                const btn = document.getElementById("play-num-btn");
+
+                // Jika sedang berjalan → stop
+                if (numSpeaking) {
+                    numSpeaking = false;
+                    numStopFlag = true;
+                    synth.cancel();
+                    killAudio();
+                    btn.textContent = "🔊 Dengarkan Satu per Satu";
+                    document
+                        .querySelectorAll(".num-card")
+                        .forEach((c) => c.classList.remove("active"));
+                    return;
+                }
+
+                // Mulai sequence
+                numSpeaking = true;
+                numStopFlag = false;
+                btn.textContent = "⏹️ Berhenti";
+                document
+                    .querySelectorAll(".num-card")
+                    .forEach((c) => c.classList.remove("active"));
+
+                let i = 1;
+                function next() {
+                    if (numStopFlag || i > 20) {
+                        numSpeaking = false;
+                        numStopFlag = false;
+                        btn.textContent = "🔊 Dengarkan Satu per Satu";
+                        document
+                            .querySelectorAll(".num-card")
+                            .forEach((c) => c.classList.remove("active"));
+                        return;
+                    }
+                    document
+                        .querySelectorAll(".num-card")
+                        .forEach((c) => c.classList.remove("active"));
+                    const card = document.getElementById("num-card-" + i);
+                    if (card) {
+                        card.classList.add("active");
+                        card.scrollIntoView({
+                            behavior: "smooth",
+                            block: "nearest",
+                        });
+                    }
+                    playAudio(numberAudioMap[i], () => {
+                        setTimeout(() => {
+                            i++;
+                            next();
+                        }, 220);
+                    });
+                }
+                next();
+            }
+
+            // ══════════════════════════════════════════════
+            // MATERI 2 — SIMBOL (+, −, =)
+            // ══════════════════════════════════════════════
+            function speakSymbolsM2() {
+                const files = [
+                    "assets/suara/materi2/tandatambah.wav",
+                    "assets/suara/materi2/tandakurang.wav",
+                    "assets/suara/materi2/tandasamadengan.wav",
+                ];
+                let i = 0;
+                function next() {
+                    if (i >= files.length) {
+                        setTimeout(() => startListen("materi"), 400);
+                        return;
+                    }
+                    playAudio(files[i], () => {
+                        i++;
+                        setTimeout(next, 300);
+                    });
+                }
+                next();
+            }
+
+            // ══════════════════════════════════════════════
+            // MATERI 3 — SOAL PENJUMLAHAN
+            // ══════════════════════════════════════════════
+            let currentSoal = 0;
+            let answerShown = false;
+
+            let soalStarted = false;
+
+            function initSoalM3() {
+                currentSoal = 0;
+                answerShown = false;
+                soalStarted = false;
+                hideFeedback();
+                document.getElementById("soal-start").style.display = "flex";
+                document.getElementById("soal-wrap-inner").style.display =
+                    "none";
+            }
+
+            function startSoalM3() {
+                soalStarted = true;
+                synth.cancel();
+                killAudio();
+                killRec();
+                document.getElementById("soal-start").style.display = "none";
+                document.getElementById("soal-wrap-inner").style.display =
+                    "flex";
+                showSoal(0);
+            }
+
+            function voiceAnswerM3(numSpoken) {
+                const soal = soalList[currentSoal];
+                const jawab =
+                    soal.op === "+" ? soal.a + soal.b : soal.a - soal.b;
+                if (numSpoken === jawab) {
+                    highlightOption(jawab, "correct");
+                    showFeedback(true);
+                    setTimeout(() => showAnswerM3(), 700);
+                } else {
+                    highlightOption(numSpoken, "wrong-pick");
+                    showFeedback(false, numSpoken);
+                    setTimeout(() => {
+                        hideFeedback();
+                        // Reset tombol opsi agar bisa dipilih lagi
+                        document
+                            .querySelectorAll(".soal-option-btn")
+                            .forEach((b) => {
+                                b.classList.remove("wrong-pick");
+                                b.disabled = false;
+                            });
+                        if (!answerShown) startListen("materi3");
+                    }, 2600);
+                }
+            }
+
+            function showFeedback(correct, wrongNum) {
+                const fb = document.getElementById("soal-feedback");
+                fb.className =
+                    "soal-feedback show " + (correct ? "correct" : "wrong");
+                fb.textContent = correct
+                    ? "✅ Benar! Bagus sekali!"
+                    : "❌ " +
+                      (wrongNum
+                          ? numberWords[wrongNum] + " itu salah!"
+                          : "Salah!") +
+                      " Coba lagi ya!";
+            }
+
+            function hideFeedback() {
+                const fb = document.getElementById("soal-feedback");
+                if (fb) fb.className = "soal-feedback";
+            }
+
+            // ── Generate 3 opsi (1 benar + 2 salah acak) ──
+            function generateOptions(correct) {
+                const candidates = [];
+                for (let d = 1; d <= 5; d++) {
+                    if (correct - d >= 1) candidates.push(correct - d);
+                    if (correct + d <= 10) candidates.push(correct + d);
+                }
+                candidates.sort(() => Math.random() - 0.5);
+                const opts = [correct, candidates[0], candidates[1]];
+                return opts.sort(() => Math.random() - 0.5);
+            }
+
+            function renderOptions(correct) {
+                const container = document.getElementById("soal-options");
+                container.innerHTML = "";
+                generateOptions(correct).forEach((num) => {
+                    const btn = document.createElement("button");
+                    btn.className = "soal-option-btn";
+                    btn.textContent = num;
+                    btn.dataset.val = num;
+                    btn.onclick = () => clickOption(num);
+                    container.appendChild(btn);
+                });
+            }
+
+            function clickOption(num) {
+                // Nonaktifkan semua tombol saat memproses
+                document.querySelectorAll(".soal-option-btn").forEach((b) => {
+                    b.disabled = true;
+                });
+                voiceAnswerM3(num);
+            }
+
+            function highlightOption(num, cls) {
+                document.querySelectorAll(".soal-option-btn").forEach((b) => {
+                    if (parseInt(b.dataset.val) === num) b.classList.add(cls);
+                });
+            }
+
+            function showSoal(idx) {
+                const soal = soalList[idx];
+                answerShown = false;
+
+                // Reset jawaban
+                const ansBox = document.getElementById("soal-ans-box");
+                const ansWord = document.getElementById("soal-ans-word");
+                ansBox.classList.remove("show");
+                ansBox.textContent = "";
+                ansWord.classList.remove("show");
+                ansWord.textContent = "";
+
+                // Tombol
+                document.getElementById("btn-jawab").style.display = "";
+                document.getElementById("btn-next").style.display = "none";
+
+                // Counter
+                document.getElementById("soal-counter").textContent =
+                    `Soal ${idx + 1} dari ${soalList.length}`;
+
+                // Render kepala kiri & kanan
+                const leftDiv = document.getElementById("soal-left");
+                const rightDiv = document.getElementById("soal-right");
+                leftDiv.innerHTML = "";
+                rightDiv.innerHTML = "";
+
+                // Tanda operator (+/−)
+                document.getElementById("soal-op-sign").textContent = soal.op;
+
+                for (let i = 0; i < soal.a; i++) {
+                    const img = new Image();
+                    img.src = "assets/kepala1.png";
+                    img.className = "soal-head-img";
+                    img.style.animationDelay = i * 0.18 + "s";
+                    leftDiv.appendChild(img);
+                }
+                for (let i = 0; i < soal.b; i++) {
+                    const img = new Image();
+                    img.src = "assets/kepala1.png";
+                    // Kepala dikurangi → abu-abu
+                    img.className =
+                        soal.op === "-"
+                            ? "soal-head-img remove"
+                            : "soal-head-img";
+                    img.style.animationDelay = i * 0.18 + "s";
+                    rightDiv.appendChild(img);
+                }
+
+                // Pertanyaan teks
+                if (soal.op === "+") {
+                    document.getElementById("soal-question").textContent =
+                        `${numberWords[soal.a]} tambah ${numberWords[soal.b]}... ada berapa kepala Doraemon? 🤔`;
+                } else {
+                    document.getElementById("soal-question").textContent =
+                        `${numberWords[soal.a]} dikurangi ${numberWords[soal.b]}... berapa yang tersisa? 🤔`;
+                }
+
+                // Render opsi pilihan
+                const jawabSoal =
+                    soal.op === "+" ? soal.a + soal.b : soal.a - soal.b;
+                renderOptions(jawabSoal);
+
+                hideFeedback();
+
+                // Audio soal — lokal jika ada, fallback TTS
+                const afterSoal = () => {
+                    showHUD("🎤 Sebutkan jawabanmu!");
+                    setTimeout(() => startListen("materi3"), 400);
+                };
+                if (soalAudioMap[idx]) {
+                    playAudio(soalAudioMap[idx], afterSoal);
+                } else if (soal.op === "+") {
+                    speak(
+                        `Ada ${numberWords[soal.a]} kepala Doraemon di sebelah kiri, ` +
+                            `ditambah ${numberWords[soal.b]} kepala Doraemon di sebelah kanan. ` +
+                            `Coba kamu hitung, ada berapa semuanya?`,
+                        afterSoal,
+                    );
+                } else {
+                    speak(
+                        `Ada ${numberWords[soal.a]} kepala Doraemon. ` +
+                            `Dikurangi ${numberWords[soal.b]} kepala Doraemon. ` +
+                            `Berapa kepala Doraemon yang tersisa?`,
+                        afterSoal,
+                    );
+                }
+            }
+
+            function showAnswerM3() {
+                if (answerShown) return;
+                answerShown = true;
+
+                const soal = soalList[currentSoal];
+                const total =
+                    soal.op === "+" ? soal.a + soal.b : soal.a - soal.b;
+                const ansBox = document.getElementById("soal-ans-box");
+                const ansWord = document.getElementById("soal-ans-word");
+
+                // Tampilkan kotak angka
+                ansBox.textContent = total;
+                ansBox.classList.add("show");
+
+                // Tampilkan kata
+                setTimeout(() => {
+                    ansWord.textContent = numberWords[total] + "! 🎉";
+                    ansWord.classList.add("show");
+                }, 450);
+
+                // Ganti tombol
+                document.getElementById("btn-jawab").style.display = "none";
+                document.getElementById("btn-next").style.display = "";
+
+                // Highlight tombol jawaban benar & nonaktifkan semua
+                document.querySelectorAll(".soal-option-btn").forEach((b) => {
+                    if (parseInt(b.dataset.val) === total)
+                        b.classList.add("correct");
+                    b.disabled = true;
+                });
+
+                hideFeedback();
+                killRec();
+                showHUD("🎤 Ucapkan 'Berikutnya' untuk soal selanjutnya");
+
+                // Audio jawaban — lokal jika ada, fallback TTS
+                if (jawabanAudioMap[currentSoal]) {
+                    playAudio(jawabanAudioMap[currentSoal], () =>
+                        setTimeout(() => startListen("materi3"), 600),
+                    );
+                } else {
+                    speak(
+                        `Jawabannya adalah ${numberWords[total]}! Hebat sekali!`,
+                        () => setTimeout(() => startListen("materi3"), 400),
+                    );
+                }
+            }
+
+            function nextSoal() {
+                currentSoal++;
+                if (currentSoal >= soalList.length) {
+                    playAudio("assets/suara/materi3/Finish.Mp3", () => {
+                        setTimeout(() => {
+                            soalStarted = false;
+                            currentSoal = 0;
+                            hideFeedback();
+                            document.getElementById(
+                                "soal-start",
+                            ).style.display = "flex";
+                            document.getElementById(
+                                "soal-wrap-inner",
+                            ).style.display = "none";
+                            showToast(
+                                "🎉 Selesai! Tekan Mulai untuk main lagi!",
+                            );
+                            startListen("materi3");
+                        }, 800);
+                    });
+                    return;
+                }
+                showSoal(currentSoal);
+            }
+
+            // ══════════════════════════════════════════════
+            // VOICE HUD
+            // ══════════════════════════════════════════════
+            function showHUD(msg) {
+                document.getElementById("hud-txt").textContent = msg;
+                document.getElementById("voice-hud").classList.add("show");
+            }
+            function hideHUD() {
+                document.getElementById("voice-hud").classList.remove("show");
+            }
+            function setDebug(msg) {
+                document.getElementById("menu-mic-lbl").textContent = msg;
+                document.getElementById("hud-txt").textContent = msg;
+            }
+
+            // ══════════════════════════════════════════════
+            // LOCAL AUDIO PLAYER
+            // ══════════════════════════════════════════════
+            let currentAudio = null;
+
+            function killAudio() {
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    currentAudio = null;
+                }
+            }
+
+            function playAudio(src, cb) {
+                isSpeaking = true;
+                killRec();
+                synth.cancel();
+                killAudio();
+                const audio = new Audio(src);
+                currentAudio = audio;
+                audio.onended = () => {
+                    isSpeaking = false;
+                    currentAudio = null;
+                    if (cb) cb();
+                };
+                audio.onerror = () => {
+                    console.warn("Audio tidak ditemukan: " + src);
+                    isSpeaking = false;
+                    currentAudio = null;
+                    if (cb) cb();
+                };
+                audio.play().catch(() => {
+                    isSpeaking = false;
+                    currentAudio = null;
+                    if (cb) cb();
+                });
+            }
+
+            // ══════════════════════════════════════════════
+            // VOICE ENGINE
+            // ══════════════════════════════════════════════
+            const SR =
+                window.SpeechRecognition || window.webkitSpeechRecognition;
+            let activeRec = null;
+            let recContext = "";
+            let recLocked = false;
+            let isSpeaking = false;
+            let restartTimer = null;
+            let micGranted = false;
+
+            function speak(text, cb) {
+                isSpeaking = true;
+                killRec();
+                killAudio();
+                synth.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = "id-ID";
+                u.rate = 0.88;
+                u.pitch = 1.2;
+                u.volume = 1;
+                const idv = voices.find((v) => v.lang.startsWith("id"));
+                if (idv) u.voice = idv;
+                u.onend = () => {
+                    isSpeaking = false;
+                    if (cb) cb();
+                };
+                u.onerror = () => {
+                    isSpeaking = false;
+                    if (cb) cb();
+                };
+                synth.speak(u);
+            }
+
+            function killRec() {
+                recLocked = true;
+                clearTimeout(restartTimer);
+                if (activeRec) {
+                    try {
+                        activeRec.abort();
+                    } catch (e) {}
+                    activeRec = null;
+                }
+            }
+
+            function scheduleRestart(delay) {
+                clearTimeout(restartTimer);
+                restartTimer = setTimeout(() => {
+                    if (!recLocked && !isSpeaking) startListen(recContext);
+                }, delay);
+            }
+
+            function startListen(context) {
+                if (!SR || !micGranted) return;
+                if (isSpeaking) {
+                    scheduleRestart(500);
+                    return;
+                }
+
+                recLocked = true;
+                clearTimeout(restartTimer);
+                if (activeRec) {
+                    try {
+                        activeRec.abort();
+                    } catch (e) {}
+                    activeRec = null;
+                }
+
+                recContext = context;
+                recLocked = false;
+
+                const r = new SR();
+                r.lang = "id-ID";
+                r.continuous = false;
+                r.interimResults = true;
+                r.maxAlternatives = 3;
+
+                r.onstart = () => {
+                    setDebug("🔴 Mendengarkan...");
+                    document
+                        .getElementById("menu-mic-dot")
+                        .classList.add("active");
+                    if (recContext === "materi")
+                        showHUD(
+                            '🔴 Mendengarkan... ucapkan "Kembali" atau pilih materi lain',
+                        );
+                    else if (recContext === "materi1")
+                        showHUD('🎤 Sebut angka 1–20, atau ucapkan "Kembali"');
+                    else if (recContext === "materi3") {
+                        if (!soalStarted)
+                            showHUD(
+                                '🎤 Ucapkan "Mulai" untuk memulai latihan!',
+                            );
+                        else if (answerShown)
+                            showHUD(
+                                '🎤 Ucapkan "Berikutnya" untuk soal berikutnya',
+                            );
+                        else showHUD("🎤 Sebutkan jawabanmu! (angka 1–20)");
+                    }
+                };
+
+                r.onresult = (e) => {
+                    let interim = "",
+                        finalTxt = "";
+                    for (let i = e.resultIndex; i < e.results.length; i++) {
+                        if (e.results[i].isFinal) {
+                            for (let j = 0; j < e.results[i].length; j++)
+                                finalTxt += " " + e.results[i][j].transcript;
+                        } else {
+                            interim += e.results[i][0].transcript;
+                        }
+                    }
+                    if (interim) setDebug("💬 " + interim);
+                    if (finalTxt.trim()) {
+                        setDebug('✅ "' + finalTxt.trim() + '"');
+                        recLocked = true;
+                        handleResult(finalTxt.trim().toLowerCase());
+                    }
+                };
+
+                r.onerror = (e) => {
+                    document
+                        .getElementById("menu-mic-dot")
+                        .classList.remove("active");
+                    if (e.error === "not-allowed") {
+                        setDebug("❌ Mikrofon tidak diizinkan");
+                        return;
+                    }
+                    if (e.error === "aborted") return;
+                    if (e.error === "no-speech")
+                        setDebug("😶 Tidak ada suara...");
+                    else setDebug("⚠️ " + e.error);
+                    if (!recLocked) scheduleRestart(800);
+                };
+
+                r.onend = () => {
+                    document
+                        .getElementById("menu-mic-dot")
+                        .classList.remove("active");
+                    if (!recLocked && !isSpeaking) scheduleRestart(400);
+                    else setDebug("⏸️ Menunggu...");
+                };
+
+                activeRec = r;
+                try {
+                    r.start();
+                } catch (e) {
+                    if (!recLocked) scheduleRestart(1000);
+                }
+            }
+
+            function handleResult(t) {
+                if (recContext === "intro") {
+                    toMenu();
+                } else if (recContext === "menu") {
+                    if (m1(t)) openMateri(1);
+                    else if (m2(t)) openMateri(2);
+                    else if (m3(t)) openMateri(3);
+                    else {
+                        showToast('Tidak dikenali: "' + t + '"');
+                        recLocked = false;
+                        scheduleRestart(600);
+                    }
+                } else if (recContext === "materi") {
+                    if (
+                        t.includes("kembali") ||
+                        t.includes("menu") ||
+                        t.includes("balik") ||
+                        t.includes("keluar")
+                    ) {
+                        backToMenu();
+                    } else if (m1(t)) openMateri(1);
+                    else if (m2(t)) openMateri(2);
+                    else if (m3(t)) openMateri(3);
+                    else {
+                        showToast('Tidak dikenali: "' + t + '"');
+                        recLocked = false;
+                        scheduleRestart(600);
+                    }
+                } else if (recContext === "materi1") {
+                    if (
+                        t.includes("kembali") ||
+                        t.includes("menu") ||
+                        t.includes("balik") ||
+                        t.includes("keluar")
+                    ) {
+                        backToMenu();
+                        // Navigasi materi hanya jika ada kata "materi" — cegah angka biasa terpicu
+                    } else if (t.includes("materi") && m2(t)) openMateri(2);
+                    else if (t.includes("materi") && m3(t)) openMateri(3);
+                    else {
+                        const num = detectNumber(t);
+                        if (num) {
+                            activateNumCard(num);
+                        } else {
+                            showToast('Tidak dikenali: "' + t + '"');
+                            recLocked = false;
+                            scheduleRestart(600);
+                        }
+                    }
+                } else if (recContext === "materi3") {
+                    const isNav =
+                        t.includes("kembali") ||
+                        t.includes("menu") ||
+                        t.includes("balik") ||
+                        t.includes("keluar");
+                    if (isNav) {
+                        backToMenu();
+                        // Navigasi materi hanya jika ada kata "materi" — cegah angka jawaban terpicu
+                    } else if (t.includes("materi") && m1(t)) openMateri(1);
+                    else if (t.includes("materi") && m2(t)) openMateri(2);
+                    else if (!soalStarted) {
+                        // Menunggu ucapan "Mulai"
+                        if (
+                            t.includes("mulai") ||
+                            t.includes("start") ||
+                            t.includes("ayo") ||
+                            t.includes("lanjut")
+                        ) {
+                            startSoalM3();
+                        } else {
+                            recLocked = false;
+                            scheduleRestart(600);
+                        }
+                    } else if (answerShown) {
+                        // Menunggu "Berikutnya"
+                        if (
+                            t.includes("berikut") ||
+                            t.includes("lanjut") ||
+                            t.includes("next") ||
+                            t.includes("soal")
+                        ) {
+                            nextSoal();
+                        } else {
+                            recLocked = false;
+                            scheduleRestart(600);
+                        }
+                    } else {
+                        // Menunggu jawaban angka
+                        const num = detectNumber(t);
+                        if (num !== null) {
+                            voiceAnswerM3(num);
+                        } else {
+                            showToast('Tidak dikenali: "' + t + '"');
+                            recLocked = false;
+                            scheduleRestart(600);
+                        }
+                    }
+                }
+            }
+
+            function m1(t) {
+                return (
+                    t.includes("satu") ||
+                    t.includes("pertama") ||
+                    t.includes("angka") ||
+                    t.includes("bilangan") ||
+                    t.includes("1") ||
+                    t.includes("one")
+                );
+            }
+            function m2(t) {
+                return (
+                    t.includes("dua") ||
+                    t.includes("kedua") ||
+                    t.includes("simbol") ||
+                    t.includes("tambah") ||
+                    t.includes("kurang") ||
+                    t.includes("2") ||
+                    t.includes("two")
+                );
+            }
+            function m3(t) {
+                return (
+                    t.includes("tiga") ||
+                    t.includes("ketiga") ||
+                    t.includes("latihan") ||
+                    t.includes("soal") ||
+                    t.includes("hitung") ||
+                    t.includes("3") ||
+                    t.includes("three")
+                );
+            }
+
+            // ══════════════════════════════════════════════
+            // PERMISSION
+            // ══════════════════════════════════════════════
+            async function requestMicPermission() {
+                const btn = document.getElementById("perm-allow-btn");
+                const status = document.getElementById("perm-status");
+                btn.textContent = "⏳ Menunggu izin...";
+                btn.disabled = true;
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        audio: true,
+                    });
+                    stream.getTracks().forEach((t) => t.stop());
+                    micGranted = true;
+                    status.textContent = "✅ Mikrofon diizinkan!";
+                    setTimeout(dismissSplash, 700);
+                } catch (err) {
+                    btn.disabled = false;
+                    btn.textContent = "🎤 Coba Lagi";
+                    status.textContent =
+                        err.name === "NotAllowedError"
+                            ? "❌ Izin ditolak — klik Allow di browser"
+                            : "❌ Mikrofon tidak tersedia";
+                }
+            }
+
+            function skipPermission() {
+                micGranted = false;
+                dismissSplash();
+            }
+
+            function dismissSplash() {
+                const s = document.getElementById("perm-splash");
+                s.classList.add("hide");
+                setTimeout(() => {
+                    s.style.display = "none";
+                    runIntro();
+                }, 650);
+            }
+
+            // ══════════════════════════════════════════════
+            // TOAST + KEYBOARD
+            // ══════════════════════════════════════════════
+            function showToast(msg) {
+                const t = document.getElementById("toast");
+                t.textContent = msg;
+                t.classList.add("show");
+                setTimeout(() => t.classList.remove("show"), 3000);
+            }
+
+            stage.addEventListener("click", () => {
+                if (!menuReady) toMenu();
+            });
+
+            document.addEventListener("keydown", (e) => {
+                if ((e.key === "Enter" || e.key === " ") && !menuReady)
+                    toMenu();
+                if (e.key === "1") openMateri(1);
+                if (e.key === "2") openMateri(2);
+                if (e.key === "3") openMateri(3);
+                if (e.key === "Escape") backToMenu();
+            });
+
+            window.addEventListener("load", () => {
+                setTimeout(loadV, 300);
+                initNumGrid(); // Buat grid angka 1-20
+            });
+        </script>
+    </body>
+</html>
